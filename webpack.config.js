@@ -4,7 +4,8 @@ const CopyPlugin = require("copy-webpack-plugin")
 
 module.exports = {
   entry: {
-    index: "./src/index.tsx"
+    index: "./src/index.tsx",
+    content: "./src/Content.tsx"
   },
   mode: "production",
   module: {
@@ -14,19 +15,14 @@ module.exports = {
         use: [
           {
             loader: "ts-loader",
-            options: {
-              compilerOptions: { noEmit: false },
-            }
+            options: { compilerOptions: { noEmit: false } }
           }],
         exclude: /node_modules/,
       },
       {
         exclude: /node_modules/,
         test: /\.css$/i,
-        use: [
-          "style-loader",
-          "css-loader"
-        ]
+        use: ["style-loader", "css-loader"]
       },
     ],
   },
@@ -48,12 +44,11 @@ module.exports = {
 };
 
 function getHtmlPlugins(chunks) {
-  return chunks.map(
-    (chunk) =>
-      new HTMLPlugin({
-        title: "React extension",
-        filename: `${chunk}.html`,
-        chunks: [chunk],
-      })
+  return chunks.map((chunk) =>
+    new HTMLPlugin({
+      title: "Highlightr",
+      filename: `${chunk}.html`,
+      chunks: [chunk],
+    })
   );
 }
