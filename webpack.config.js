@@ -19,11 +19,6 @@ module.exports = {
           }],
         exclude: [/node_modules/, /\.test\.tsx?$/],
       },
-      {
-        test: /\.css$/i,
-        exclude: /node_modules/,
-        use: ["style-loader", "css-loader"]
-      },
     ],
   },
   plugins: [
