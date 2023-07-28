@@ -1,8 +1,8 @@
-import { RefObject, useEffect, useMemo, useState } from 'react';
+import { MutableRefObject, useEffect, useMemo, useState } from 'react';
 import { autoUpdate, computePosition, flip, offset, inline } from '@floating-ui/dom';
 
 type Props = {
-  ref: RefObject<HTMLElement>;
+  ref: MutableRefObject<HTMLElement | null>;
   range: Range | null;
 }
 

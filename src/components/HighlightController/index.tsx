@@ -1,7 +1,8 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import useConfig from '../../hooks/useConfig';
 import useSelectedText from '../../hooks/useSelectedText';
 import usePositioner from '../../hooks/usePositioner';
+import TooltipActions from '../TooltipActions';
 
 export default function HighlightController() {
   const config = useConfig();
@@ -9,18 +10,24 @@ export default function HighlightController() {
   const tooltipRef = useRef<HTMLSpanElement>(null);
   const position = usePositioner({ ref: tooltipRef, range: selection.range });
 
-  if (!config.enabled) return null;
-  if (!position) return null;
+  const visible = useMemo(() => {
+    if (!config.enabled) return false;
+    if (!position) return false;
+    return true;
+  }, [config.enabled, position]);
 
   return (
-    <>
-      <span
-        ref={tooltipRef}
-        className="fixed z-50 p-2 text-white bg-black rounded shadow"
-        style={{ position: 'absolute', left: position.x, top: position.y }}
-      >
-        assd
-      </span>
-    </>
+    <span
+      ref={tooltipRef}
+      style={{
+        display: visible ? 'block' : 'none',
+        position: 'absolute',
+        left: position?.x,
+        top: position?.y,
+        zIndex: 9999,
+      }}
+    >
+      <TooltipActions />
+    </span>
   );
 }

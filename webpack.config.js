@@ -19,6 +19,11 @@ module.exports = {
           }],
         exclude: [/node_modules/, /\.test\.tsx?$/],
       },
+      {
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        use: ['@svgr/webpack'],
+      },
     ],
   },
   plugins: [
