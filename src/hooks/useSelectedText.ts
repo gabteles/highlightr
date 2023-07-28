@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import debounce from '../util/debounce';
 
 export default function useSelectedText() {
   const [selection, setSelection] = useState<Selection | null>(null);
 
   useEffect(() => {
-    const listener = debounce(() => setSelection(window?.getSelection()));
+    const listener = () => setSelection(window?.getSelection());
     document.addEventListener('selectionchange', listener);
     return () => document.removeEventListener('selectionchange', listener);
   }, []);
