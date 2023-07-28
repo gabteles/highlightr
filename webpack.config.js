@@ -17,11 +17,11 @@ module.exports = {
             loader: "ts-loader",
             options: { compilerOptions: { noEmit: false } }
           }],
-        exclude: /node_modules/,
+        exclude: [/node_modules/, /\.test\.tsx?$/],
       },
       {
-        exclude: /node_modules/,
         test: /\.css$/i,
+        exclude: /node_modules/,
         use: ["style-loader", "css-loader"]
       },
     ],

@@ -2,7 +2,6 @@ import debounce from './debounce';
 
 describe('debounce', () => {
   it('calls the callback once for multiple calls within the wait period', () => {
-    jest.useFakeTimers();
     const cb = jest.fn();
     const debounced = debounce(cb, 100);
 
@@ -18,7 +17,6 @@ describe('debounce', () => {
   });
 
   it('calls the callback multiple times if the wait period has passed', () => {
-    jest.useFakeTimers();
     const cb = jest.fn();
     const debounced = debounce(cb, 100);
 
