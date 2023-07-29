@@ -44,10 +44,7 @@ export default class Demux {
   private onSubscribe(port: chrome.runtime.Port, message: MuxSubscribe) {
     const unregister = this.config.subscriptions[message.event]?.(
       message.payload,
-      (payload: object) => {
-        console.log('emit', payload)
-        port.postMessage({ subscriptionId: message.subscriptionId, payload })
-      },
+      (payload: object) => port.postMessage({ subscriptionId: message.subscriptionId, payload }),
     );
 
     this.subscriptions.set(message.subscriptionId, unregister);

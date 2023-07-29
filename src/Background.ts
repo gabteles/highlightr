@@ -9,14 +9,11 @@ HighlightStore.highlights.clear();
 const commPort = new Demux({
   commands: {
     'save-highlight': (payload: { highlight: Highlight }) => {
-      console.log('save-highlight', payload)
-      HighlightStore.highlights.add(payload.highlight)
-        .catch((err) => console.error(err));
+      HighlightStore.highlights.add(payload.highlight);
     },
   },
   subscriptions: {
     'page-highlights': ({ pageUrl }: { pageUrl: string }, emit) => {
-      console.log('page-highlights', pageUrl)
       const getHighlightsForPage = async () => {
         const highlights = await HighlightStore.highlights
           .where('url')
@@ -27,7 +24,6 @@ const commPort = new Demux({
       };
 
       const listener = (changes: IDatabaseChange[]) => {
-        console.log({ changes })
         let changed = false;
         for (const change of changes) {
           if (change.table !== 'highlights') continue;

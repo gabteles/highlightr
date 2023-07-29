@@ -59,7 +59,7 @@ export default function Highlighter() {
       }}
       data-testid="tooltip"
     >
-      <button onClick={onHighlight}>
+      <button onClick={onHighlight} aria-label="highlightr">
         <HighlightIcon />
       </button>
     </span>
