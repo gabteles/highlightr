@@ -1,5 +1,5 @@
 import { MutableRefObject, useEffect, useMemo, useState } from 'react';
-import { autoUpdate, computePosition, flip, offset, inline } from '@floating-ui/dom';
+import { autoUpdate, computePosition, autoPlacement, offset, inline } from '@floating-ui/dom';
 
 type Props = {
   ref: MutableRefObject<HTMLElement | null>;
@@ -34,7 +34,7 @@ export default function usePositioner({ ref, range }: Props): Return {
 
     return autoUpdate(virtualEl, ref.current, () => {
       if (!virtualEl || !ref.current) return;
-      computePosition(virtualEl, ref.current, { middleware: [flip(), inline(), offset(10)] })
+      computePosition(virtualEl, ref.current, { middleware: [autoPlacement(), inline(), offset(10)] })
         .then(({ x, y }) => setPosition({ x, y }));
     });
   }, [virtualEl, ref]);
