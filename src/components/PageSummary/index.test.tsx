@@ -35,4 +35,21 @@ describe('PageSummary', () => {
       right: '0px',
     });
   });
+
+  it('opens the sidbar when clicked', () => {
+    render(<PageSummary />);
+    act(() => {
+      highlightStore.watchHighlights.mock.calls[0][1]([
+        { uuid: '123', text: 'Some text', url: 'http://example.com', createdAt: '2023-01-01T00:00:00.000Z' },
+      ])
+    })
+
+    act(() => {
+      screen.getByLabelText('Highlight summary').click();
+    });
+
+    expect(screen.getByTestId('highlights-summary')).toHaveStyle({
+      clipPath: 'circle(100%)',
+    });
+  });
 });

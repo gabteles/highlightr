@@ -89,7 +89,7 @@ export default function PageSummary() {
         <div className={contentStyle}>
 
         </div>
-        <button className={toggleStyle} onClick={() => setIsOpen(!isOpen)}>
+        <button className={toggleStyle} onClick={() => setIsOpen(!isOpen)} aria-label="Highlight summary">
           <SummaryIcon />
         </button>
       </div>
