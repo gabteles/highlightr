@@ -1,8 +1,11 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { css } from '@emotion/css';
+import { v4 as uuidv4 } from 'uuid';
 import useSelectedText from '../../hooks/useSelectedText';
 import usePositioner from '../../hooks/usePositioner';
 import HighlightIcon from './assets/highlight.svg';
+import useHighlightStore from '../../hooks/useHighlightStore';
+import usePageMetadata from '../../hooks/usePageMetadata';
 
 const tooltipStyle = css`
   position: absolute;
@@ -30,11 +33,19 @@ export default function Highlighter() {
   const tooltipRef = useRef<HTMLSpanElement>(null);
   const selection = useSelectedText();
   const position = usePositioner({ range: selection?.range, ref: tooltipRef });
+  const store = useHighlightStore();
+  const pageMetadata = usePageMetadata();
   const hasSelection = !!selection?.text;
 
   const onHighlight = () => {
-    if (!selection) return;
-    alert(`Highlighting: ${selection.text}`);
+    if (!selection?.text) return;
+
+    store.saveHighlight({
+      uuid: uuidv4(),
+      text: selection.text,
+      createdAt: new Date().toISOString(),
+      url: pageMetadata.canonical,
+    });
   };
 
   return (

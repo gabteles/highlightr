@@ -1,11 +1,16 @@
-import { useState } from 'react';
-import { useWindowSize } from "@uidotdev/usehooks";
+import { useEffect, useState } from 'react';
+import { useWindowSize } from 'usehooks-ts';
 import { css } from '@emotion/css';
+import usePageMetadata from '../../hooks/usePageMetadata';
+import useHighlightStore from '../../hooks/useHighlightStore';
+import { Highlight } from '../../types/Highlight';
+import SummaryIcon from './assets/summary.svg';
 
 const navStyle = css`
   position: fixed;
   right: 0;
   bottom: 0;
+  height: 100vh;
   width: 400px;
   z-index: 99999;
   overflow: hidden;
@@ -45,27 +50,48 @@ const toggleStyle = css`
   border: none;
   border-radius: 50%;
   cursor: pointer;
-`
+  text-align: center;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    fill: #fff;
+  }
+`;
 
 export default function PageSummary() {
   const [isOpen, setIsOpen] = useState(false);
   const { height } = useWindowSize();
+  const pageMetadata = usePageMetadata();
+  const store = useHighlightStore();
+  const [highlights, setHighlights] = useState<Highlight[]>([]);
+
+  useEffect(() => {
+    if (!pageMetadata.canonical) return;
+    return store.watchHighlights(pageMetadata.canonical, setHighlights);
+  }, [pageMetadata.canonical, store]);
+
+  const isVisible = highlights.length > 0;
 
   return (
     <nav
       className={navStyle}
       style={{
-        top: isOpen ? '0px' : `88px`,
-        right: isOpen ? '0px' : `-88px`,
+        bottom: (isVisible || isOpen) ? '0px' : `-88px`,
+        right: (isVisible || isOpen) ? '0px' : `-88px`,
         clipPath: isOpen ? 'circle(100%)' : `circle(24px at calc(400px - 24px - 8px) ${height - 24 - 8}px)`,
       }}
+      data-testid="highlights-summary"
     >
       <div className={backgroundStyle} />
       <div className={contentWrapperStyle}>
         <div className={contentStyle}>
 
         </div>
-        <button className={toggleStyle} onClick={() => setIsOpen(!isOpen)} >Open</button>
+        <button className={toggleStyle} onClick={() => setIsOpen(!isOpen)}>
+          <SummaryIcon />
+        </button>
       </div>
     </nav>
   );
