@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Highlight } from '../types/Highlight';
 import Mux from '../util/communication/Mux';
 
@@ -23,10 +23,12 @@ export default function useHighlightStore(): Return {
   const mux = useRef<HighlightStoreMux>(new HighlightStoreMux());
   useEffect(() => mux.current.connect(), []);
 
-  return {
+  const value: Return = useMemo(() => ({
     saveHighlight: (highlight) => mux.current.saveHighlight(highlight),
     watchHighlights: (pageUrl, callback) => (
       mux.current.watchHighlights(pageUrl, (payload) => callback(payload.highlights))
     ),
-  };
+  }), []);
+
+  return value;
 }
