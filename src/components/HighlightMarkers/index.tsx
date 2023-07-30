@@ -1,8 +1,6 @@
-import { useCallback, useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import PageHighlightsContext from '../../context/PageHighlightsContext';
-import { Highlight } from '../../types/Highlight';
 import { css } from '@emotion/css';
-import elementFromQuery from '../../util/elementFromQuery';
 import markHighlight from './markHighlight';
 import clearHighlightMarks from './clearHighlightMarks';
 
@@ -23,62 +21,61 @@ const highlightEmphasisStyle = css`
 export default function HighlightMarkers() {
   const { highlights, emphasis, addEmphasis, removeEmphasis } = useContext(PageHighlightsContext);
 
-  const updateStyles = () => {
-    highlights.forEach((highlight) => {
-      const styles = [highlightStyle];
-      if (emphasis.includes(highlight.uuid as string)) styles.push(highlightEmphasisStyle);
-
-      document.querySelectorAll(`[data-highlight-id="${highlight.uuid}"]`).forEach((highlightNode) => {
-        highlightNode.className = styles.join(' ');
-      });
-    });
-  }
-
-  const onHoverListener = useCallback((ev: Event) => {
-    const target = ev.target as HTMLElement;
-    const highlightId = target.dataset.highlightId;
-    if (highlightId) addEmphasis(highlightId);
-  }, [addEmphasis]);
-
-  const onHoverOutListener = useCallback((ev: Event) => {
-    const target = ev.target as HTMLElement;
-    const highlightId = target.dataset.highlightId;
-    if (highlightId) removeEmphasis(highlightId);
-  }, [removeEmphasis]);
-
+  // Creates markers
   useEffect(() => {
     highlights
       .sort((a, b) => (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()))
       .forEach((highlight) => {
-        const containerEl = elementFromQuery(highlight.container);
-        if (!containerEl) return;
-
         try {
-          markHighlight(containerEl, highlight);
+          markHighlight({ highlight });
         } catch {
           // DO NOTHING (?)
         }
       });
+
+    return () => {
+      clearHighlightMarks();
+      highlights.forEach((highlight) => removeEmphasis(highlight.uuid as string));
+    };
+  }, [highlights, removeEmphasis]);
+
+  // Adds listeners to markers
+  useEffect(() => {
+    const onHoverListener = (ev: Event) => {
+      const target = ev.target as HTMLElement;
+      const highlightId = target.dataset.highlightId;
+      if (highlightId) addEmphasis(highlightId);
+    };
+
+    const onHoverOutListener = (ev: Event) => {
+      const target = ev.target as HTMLElement;
+      const highlightId = target.dataset.highlightId;
+      if (highlightId) removeEmphasis(highlightId);
+    };
 
     document.querySelectorAll(`[data-highlight-id]`).forEach((el) => {
       el.addEventListener('mouseenter', onHoverListener);
       el.addEventListener('mouseleave', onHoverOutListener);
     });
 
-    updateStyles();
-
     return () => {
-      clearHighlightMarks();
-      emphasis.forEach((highlightId) => removeEmphasis(highlightId));
       document.querySelectorAll(`[data-highlight-id]`).forEach((el) => {
         el.removeEventListener('mouseenter', onHoverListener);
         el.removeEventListener('mouseleave', onHoverOutListener);
       });
     };
-  }, [highlights, onHoverListener, onHoverOutListener]);
+  }, [highlights, addEmphasis, removeEmphasis]);
 
+  // Updates marker styles based on emphasis
   useEffect(() => {
-    updateStyles();
+    highlights.forEach((highlight) => {
+      const styles = [highlightStyle];
+      if (emphasis.includes(highlight.uuid as string)) styles.push(highlightEmphasisStyle);
+
+      document
+        .querySelectorAll(`[data-highlight-id="${highlight.uuid}"]`)
+        .forEach((highlightNode) => highlightNode.className = styles.join(' '));
+    });
   }, [highlights, emphasis]);
 
   return null;

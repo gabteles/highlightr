@@ -5,12 +5,18 @@ function isTextNode(node: Node): node is Text {
   return node.nodeType === Node.TEXT_NODE;
 }
 
-export default function markHighlight(
-  container: Node,
-  highlight: Highlight,
-  startFoundPrev = false,
-  charsHighlightedPrev = 0,
-): [boolean, number] {
+type HighlightConfig = {
+  highlight: Highlight;
+  container?: Node;
+  startFound?: boolean;
+  charsHighlighted?: number;
+};
+
+export default function markHighlight(config: HighlightConfig): [boolean, number] {
+  const { highlight, startFound: startFoundPrev = false, charsHighlighted: charsHighlightedPrev = 0 } = config;
+  const container = 'container' in config ? config.container : elementFromQuery(config.highlight.container);
+  if (!container) return [false, 0];
+
   const selectionLength = highlight.text.length;
 
   let startFound = startFoundPrev;
@@ -30,7 +36,7 @@ export default function markHighlight(
       const visible = cssVisible && htmlVisible;
 
       if (visible) {
-        [startFound, charsHighlighted] = markHighlight(element, highlight, startFound, charsHighlighted);
+        [startFound, charsHighlighted] = markHighlight({ ...config, container: element });
       }
 
       continue;
