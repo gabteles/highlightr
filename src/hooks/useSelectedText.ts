@@ -3,6 +3,11 @@ import { useEffect, useState } from 'react';
 type Return = {
   text: null | string;
   range: null | Range;
+  container: null | Node;
+  anchorNode: Node | null;
+  anchorOffset: number | null;
+  focusNode: Node | null;
+  focusOffset: number | null;
 }
 
 /**
@@ -10,7 +15,16 @@ type Return = {
  * Ref.: https://developer.mozilla.org/en-US/docs/Web/API/Selection
  */
 export default function useSelectedText(): Return {
-  const [value, setValue] = useState<Return>({ text: null, range: null });
+  const initialValue: Return = {
+    text: null,
+    range: null,
+    container: null,
+    anchorNode: null,
+    anchorOffset: null,
+    focusNode: null,
+    focusOffset: null,
+  };
+  const [value, setValue] = useState<Return>(initialValue);
 
   useEffect(() => {
     const listener = () => {
@@ -18,13 +32,20 @@ export default function useSelectedText(): Return {
       const hasSelection = !!selection?.toString();
 
       if (!hasSelection) {
-        setValue({ text: null, range: null });
+        setValue(initialValue);
         return;
       }
 
+      const range = selection?.getRangeAt(0);
+
       setValue({
         text: selection?.toString() ?? null,
-        range: selection?.getRangeAt(0) ?? null
+        range: range ?? null,
+        container: range?.commonAncestorContainer ?? null,
+        anchorNode: selection?.anchorNode ?? null,
+        anchorOffset: selection?.anchorOffset ?? null,
+        focusNode: selection?.focusNode ?? null,
+        focusOffset: selection?.focusOffset ?? null,
       })
     };
 

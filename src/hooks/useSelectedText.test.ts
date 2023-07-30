@@ -4,21 +4,33 @@ import useSelectedText from './useSelectedText';
 describe('useSelectedText', () => {
   it('returns nothing initially', async () => {
     const { result } = renderHook(() => useSelectedText());
-    expect(result.current.text).toBe(null);
-    expect(result.current.range).toBe(null);
+    expect(result.current).toEqual({
+      text: null,
+      range: null,
+      container: null,
+      anchorNode: null,
+      anchorOffset: null,
+      focusNode: null,
+      focusOffset: null,
+    });
   });
 
-  it('returns the text and node when a `selectionchange` event is fired', async () => {
+  it('returns selection data when a `selectionchange` event is fired', async () => {
     const { result } = renderHook(() => useSelectedText());
 
     const range = document.createRange();
+    const anchorNode = document.createTextNode('');
+    const focusNode = document.createTextNode('');
+
+    const commonAncestorContainer = document.createElement('div');
+    Object.defineProperty(range, 'commonAncestorContainer', { value: commonAncestorContainer });
 
     jest.spyOn(window, 'getSelection').mockReturnValueOnce({
       type: 'Range',
-      anchorNode: document.createTextNode(''),
-      anchorOffset: 0,
-      focusNode: document.createTextNode(''),
-      focusOffset: 0,
+      anchorNode,
+      anchorOffset: 10,
+      focusNode,
+      focusOffset: 20,
       isCollapsed: false,
       rangeCount: 1,
       addRange: jest.fn(),
@@ -43,11 +55,18 @@ describe('useSelectedText', () => {
       document.dispatchEvent(new Event('selectionchange'))
     });
 
-    expect(result.current.text).toBe('Selected Text');
-    expect(result.current.range).toBe(range);
+    expect(result.current).toEqual({
+      text: 'Selected Text',
+      range,
+      container: commonAncestorContainer,
+      anchorNode,
+      anchorOffset: 10,
+      focusNode,
+      focusOffset: 20,
+    });
   });
 
-  it('returns nothing when a `selectionchange` event is fired but there is no selection', async () => {
+  it('returns nothing when a `selectionchange` event is fired but there is no selected text', async () => {
     const { result } = renderHook(() => useSelectedText());
 
     jest.spyOn(window, 'getSelection').mockReturnValueOnce({
@@ -80,7 +99,14 @@ describe('useSelectedText', () => {
       document.dispatchEvent(new Event('selectionchange'))
     });
 
-    expect(result.current.text).toBe(null);
-    expect(result.current.range).toBe(null);
+    expect(result.current).toEqual({
+      text: null,
+      range: null,
+      container: null,
+      anchorNode: null,
+      anchorOffset: null,
+      focusNode: null,
+      focusOffset: null,
+    });
   });
 })
