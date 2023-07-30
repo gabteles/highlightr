@@ -3,6 +3,7 @@ import PageHighlightsContext from '../../context/PageHighlightsContext';
 import { css } from '@emotion/css';
 import markHighlight from './markHighlight';
 import clearHighlightMarks from './clearHighlightMarks';
+import SidebarContext from '../../context/SidebarContext';
 
 const highlightStyle = css`
   background: rgba(255, 255, 0, 0.5);
@@ -20,6 +21,7 @@ const highlightEmphasisStyle = css`
 
 export default function HighlightMarkers() {
   const { highlights, emphasis, addEmphasis, removeEmphasis } = useContext(PageHighlightsContext);
+  const sidebar = useContext(SidebarContext);
 
   // Creates markers
   useEffect(() => {
@@ -53,18 +55,24 @@ export default function HighlightMarkers() {
       if (highlightId) removeEmphasis(highlightId);
     };
 
+    const onClickListener = () => {
+      sidebar.open();
+    }
+
     document.querySelectorAll(`[data-highlight-id]`).forEach((el) => {
       el.addEventListener('mouseenter', onHoverListener);
       el.addEventListener('mouseleave', onHoverOutListener);
+      el.addEventListener('click', onClickListener);
     });
 
     return () => {
       document.querySelectorAll(`[data-highlight-id]`).forEach((el) => {
         el.removeEventListener('mouseenter', onHoverListener);
         el.removeEventListener('mouseleave', onHoverOutListener);
+        el.removeEventListener('click', onClickListener);
       });
     };
-  }, [highlights, addEmphasis, removeEmphasis]);
+  }, [highlights, addEmphasis, removeEmphasis, sidebar]);
 
   // Updates marker styles based on emphasis
   useEffect(() => {

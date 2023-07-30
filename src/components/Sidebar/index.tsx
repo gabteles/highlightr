@@ -1,12 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { useWindowSize } from 'usehooks-ts';
 import { css } from '@emotion/css';
-import usePageMetadata from '../../hooks/usePageMetadata';
-import useHighlightStore from '../../hooks/useHighlightStore';
-import { Highlight } from '../../types/Highlight';
 import SummaryIcon from './assets/summary.svg';
 import HighlightList from '../HighlightList';
 import PageHighlightsContext from '../../context/PageHighlightsContext';
+import SidebarContext from '../../context/SidebarContext';
 
 const navStyle = css`
   position: fixed;
@@ -64,10 +62,10 @@ const toggleStyle = css`
   }
 `;
 
-export default function PageSummary() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { height } = useWindowSize();
+export default function Sidebar() {
+  const sidebar = useContext(SidebarContext);
   const { highlights } = useContext(PageHighlightsContext);
+  const { height } = useWindowSize();
 
   const isVisible = highlights.length > 0;
 
@@ -75,9 +73,9 @@ export default function PageSummary() {
     <nav
       className={navStyle}
       style={{
-        bottom: (isVisible || isOpen) ? '0px' : `-88px`,
-        right: (isVisible || isOpen) ? '0px' : `-88px`,
-        clipPath: isOpen ? 'circle(100%)' : `circle(24px at calc(400px - 24px - 8px) ${height - 24 - 8}px)`,
+        bottom: (isVisible || sidebar.isOpen) ? '0px' : `-88px`,
+        right: (isVisible || sidebar.isOpen) ? '0px' : `-88px`,
+        clipPath: sidebar.isOpen ? 'circle(100%)' : `circle(24px at calc(400px - 24px - 8px) ${height - 24 - 8}px)`,
       }}
       data-testid="highlights-summary"
     >
@@ -86,7 +84,7 @@ export default function PageSummary() {
         <div className={contentStyle}>
           <HighlightList highlights={highlights} />
         </div>
-        <button className={toggleStyle} onClick={() => setIsOpen(!isOpen)} aria-label="Highlight summary">
+        <button className={toggleStyle} onClick={() => sidebar.toggle()} aria-label="Highlight summary">
           <SummaryIcon />
         </button>
       </div>

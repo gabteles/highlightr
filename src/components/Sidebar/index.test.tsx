@@ -1,10 +1,10 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
-import PageSummary from './index';
+import Sidebar from './index';
 import PageHighlightsContext from '../../context/PageHighlightsContext';
 import { Highlight } from '../../types/Highlight';
 
-describe('PageSummary', () => {
+describe('Sidebar', () => {
   const baseValue = {
     highlights: [],
     emphasis: [],
@@ -15,7 +15,7 @@ describe('PageSummary', () => {
   it('renders hidden at first', () => {
     render(
       <PageHighlightsContext.Provider value={{ ...baseValue, highlights: [] }}>
-        <PageSummary />
+        <Sidebar />
       </PageHighlightsContext.Provider>
     );
     expect(screen.getByTestId('highlights-summary')).toHaveStyle({
@@ -39,7 +39,7 @@ describe('PageSummary', () => {
 
     render(
       <PageHighlightsContext.Provider value={{ ...baseValue, highlights: [highlight] }}>
-        <PageSummary />
+        <Sidebar />
       </PageHighlightsContext.Provider>
     );
 
@@ -64,7 +64,7 @@ describe('PageSummary', () => {
 
     render(
       <PageHighlightsContext.Provider value={{ ...baseValue, highlights: [highlight] }}>
-        <PageSummary />
+        <Sidebar />
       </PageHighlightsContext.Provider>
     );
 
