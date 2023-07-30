@@ -1,5 +1,7 @@
 import { css } from '@emotion/css';
 import { Highlight } from '../../types/Highlight';
+import { useContext } from 'react';
+import PageHighlightsContext from '../../context/PageHighlightsContext';
 
 type Props = {
   highlights: Highlight[]
@@ -26,6 +28,7 @@ const wrapperStyle = css`
       border-radius: 4px;
       border-left: 6px solid #99cc33;
       margin-bottom: 8px;
+      cursor: pointer;
     }
   }
 `;
@@ -38,13 +41,28 @@ const titleStyle = css`
 `;
 
 export default function HighlightList({ highlights }: Props) {
+  const { addEmphasis, removeEmphasis } = useContext(PageHighlightsContext);
+
+  const onClick = (uuid: string) => () => {
+    document.querySelector(`[data-highlight-id="${uuid}"]`)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'center',
+    });
+  };
+
   return (
     <div className={wrapperStyle}>
       <div className={titleStyle}>Summary</div>
       <div className={titleStyle}>Highlights</div>
       <ul>
         {highlights.map((highlight) => (
-          <li key={highlight.uuid}>
+          <li
+            key={highlight.uuid}
+            onClick={onClick(highlight.uuid as string)}
+            onMouseEnter={() => addEmphasis(highlight.uuid as string)}
+            onMouseLeave={() => removeEmphasis(highlight.uuid as string)}
+          >
             {highlight.text}
           </li>
         ))}

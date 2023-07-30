@@ -1,22 +1,23 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import PageSummary from './index';
-import useHighlightStore from '../../hooks/useHighlightStore';
-jest.mock('../../hooks/useHighlightStore');
+import PageHighlightsContext from '../../context/PageHighlightsContext';
+import { Highlight } from '../../types/Highlight';
 
 describe('PageSummary', () => {
-  let highlightStore!: { watchHighlights: jest.Mock };
-
-  beforeEach(() => {
-    highlightStore = {
-      watchHighlights: jest.fn(),
-    };
-
-    (useHighlightStore as jest.Mock).mockReturnValue(highlightStore);
-  });
+  const baseValue = {
+    highlights: [],
+    emphasis: [],
+    addEmphasis: jest.fn(),
+    removeEmphasis: jest.fn(),
+  };
 
   it('renders hidden at first', () => {
-    render(<PageSummary />);
+    render(
+      <PageHighlightsContext.Provider value={{ ...baseValue, highlights: [] }}>
+        <PageSummary />
+      </PageHighlightsContext.Provider>
+    );
     expect(screen.getByTestId('highlights-summary')).toHaveStyle({
       bottom: '-88px',
       right: '-88px',
@@ -24,12 +25,24 @@ describe('PageSummary', () => {
   });
 
   it('renders visible when there are highlights', () => {
-    render(<PageSummary />);
-    act(() => {
-      highlightStore.watchHighlights.mock.calls[0][1]([
-        { uuid: '123', text: 'Some text', url: 'http://example.com', createdAt: '2023-01-01T00:00:00.000Z' },
-      ])
-    })
+    const highlight: Highlight = {
+      uuid: '1234',
+      createdAt: new Date().toISOString(),
+      text: 'Foobar',
+      url: 'http://localhost:3000',
+      container: '#container',
+      anchorNode: '#anchorNode',
+      anchorOffset: 0,
+      focusNode: '#focusNode',
+      focusOffset: 1,
+    };
+
+    render(
+      <PageHighlightsContext.Provider value={{ ...baseValue, highlights: [highlight] }}>
+        <PageSummary />
+      </PageHighlightsContext.Provider>
+    );
+
     expect(screen.getByTestId('highlights-summary')).toHaveStyle({
       bottom: '0px',
       right: '0px',
@@ -37,12 +50,23 @@ describe('PageSummary', () => {
   });
 
   it('opens the sidbar when clicked', () => {
-    render(<PageSummary />);
-    act(() => {
-      highlightStore.watchHighlights.mock.calls[0][1]([
-        { uuid: '123', text: 'Some text', url: 'http://example.com', createdAt: '2023-01-01T00:00:00.000Z' },
-      ])
-    })
+    const highlight: Highlight = {
+      uuid: '1234',
+      createdAt: new Date().toISOString(),
+      text: 'Foobar',
+      url: 'http://localhost:3000',
+      container: '#container',
+      anchorNode: '#anchorNode',
+      anchorOffset: 0,
+      focusNode: '#focusNode',
+      focusOffset: 1,
+    };
+
+    render(
+      <PageHighlightsContext.Provider value={{ ...baseValue, highlights: [highlight] }}>
+        <PageSummary />
+      </PageHighlightsContext.Provider>
+    );
 
     act(() => {
       screen.getByLabelText('Highlight summary').click();

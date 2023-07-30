@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useWindowSize } from 'usehooks-ts';
 import { css } from '@emotion/css';
 import usePageMetadata from '../../hooks/usePageMetadata';
@@ -6,6 +6,7 @@ import useHighlightStore from '../../hooks/useHighlightStore';
 import { Highlight } from '../../types/Highlight';
 import SummaryIcon from './assets/summary.svg';
 import HighlightList from '../HighlightList';
+import PageHighlightsContext from '../../context/PageHighlightsContext';
 
 const navStyle = css`
   position: fixed;
@@ -66,14 +67,7 @@ const toggleStyle = css`
 export default function PageSummary() {
   const [isOpen, setIsOpen] = useState(false);
   const { height } = useWindowSize();
-  const pageMetadata = usePageMetadata();
-  const store = useHighlightStore();
-  const [highlights, setHighlights] = useState<Highlight[]>([]);
-
-  useEffect(() => {
-    if (!pageMetadata.canonical) return;
-    return store.watchHighlights(pageMetadata.canonical, setHighlights);
-  }, [pageMetadata.canonical, store]);
+  const { highlights } = useContext(PageHighlightsContext);
 
   const isVisible = highlights.length > 0;
 

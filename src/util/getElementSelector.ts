@@ -11,8 +11,8 @@ export default function getElementSelector(element: HTMLElement | Node | null): 
 
   // Element is a text node
   if (!localName) {
-    const index = siblings.indexOf(element);
-    return `${parentSelector}>textNode:nth-of-type(${index})`;
+    const index = siblings.filter((sib) => sib.nodeType === Node.TEXT_NODE).indexOf(element);
+    return `${parentSelector}>textNode:nth-of-type(${index + 1})`;
   }
 
   const index = siblings.filter((sib) => (sib as HTMLElement).localName === localName).indexOf(element) + 1;
