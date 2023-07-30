@@ -13,14 +13,14 @@ type HighlightConfig = {
 };
 
 export default function markHighlight(config: HighlightConfig): [boolean, number] {
-  const { highlight, startFound: startFoundPrev = false, charsHighlighted: charsHighlightedPrev = 0 } = config;
-  const container = 'container' in config ? config.container : elementFromQuery(config.highlight.container);
+  const { highlight } = config;
+  const container = 'container' in config ? config.container : elementFromQuery(highlight.container);
   if (!container) return [false, 0];
 
   const selectionLength = highlight.text.length;
 
-  let startFound = startFoundPrev;
-  let charsHighlighted = charsHighlightedPrev;
+  let startFound = config.startFound ?? false;
+  let charsHighlighted = config.charsHighlighted ?? 0;
 
   const anchorNode = elementFromQuery(highlight.anchorNode);
   const focusNode = elementFromQuery(highlight.focusNode);
@@ -36,7 +36,12 @@ export default function markHighlight(config: HighlightConfig): [boolean, number
       const visible = cssVisible && htmlVisible;
 
       if (visible) {
-        [startFound, charsHighlighted] = markHighlight({ ...config, container: element });
+        [startFound, charsHighlighted] = markHighlight({
+          ...config,
+          container: element,
+          startFound,
+          charsHighlighted,
+        });
       }
 
       continue;
@@ -94,8 +99,8 @@ export default function markHighlight(config: HighlightConfig): [boolean, number
     const highlightNode = document.createElement('span');
     highlightNode.dataset.highlightId = highlight.uuid;
     highlightNode.textContent = highlightTextEl.nodeValue;
-    highlightTextEl.remove();
     parent?.insertBefore(highlightNode, insertBeforeElement);
+    highlightTextEl.remove();
   }
 
   return [startFound, charsHighlighted];
