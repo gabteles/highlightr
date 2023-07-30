@@ -6,6 +6,7 @@ import usePositioner from '../../hooks/usePositioner';
 import HighlightIcon from './assets/highlight.svg';
 import useHighlightStore from '../../hooks/useHighlightStore';
 import usePageMetadata from '../../hooks/usePageMetadata';
+import getElementSelector from '../../util/getElementSelector';
 
 const tooltipStyle = css`
   position: absolute;
@@ -45,6 +46,11 @@ export default function Highlighter() {
       text: selection.text,
       createdAt: new Date().toISOString(),
       url: pageMetadata.canonical,
+      container: getElementSelector(selection.container),
+      anchorNode: getElementSelector(selection.anchorNode),
+      anchorOffset: selection.anchorOffset || 0,
+      focusNode: getElementSelector(selection.focusNode),
+      focusOffset: selection.focusOffset || 0,
     });
   };
 

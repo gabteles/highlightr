@@ -8,8 +8,8 @@ class HighlightStore extends Dexie {
   constructor() {
     super('highlightr');
 
-    this.version(2).stores({
-      highlights: '$$uuid, url, createdAt, text',
+    this.version(3).stores({
+      highlights: '$$uuid, url, createdAt, text, container, anchorNode, anchorOffset, focusNode, focusOffset',
     });
   }
 }

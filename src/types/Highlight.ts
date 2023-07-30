@@ -3,4 +3,9 @@ export type Highlight = {
   url: string;
   createdAt: string;
   text: string;
+  container: string;
+  anchorNode: string,
+  anchorOffset: number,
+  focusNode: string,
+  focusOffset: number,
 };

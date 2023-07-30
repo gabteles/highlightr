@@ -5,6 +5,7 @@ import usePageMetadata from '../../hooks/usePageMetadata';
 import useHighlightStore from '../../hooks/useHighlightStore';
 import { Highlight } from '../../types/Highlight';
 import SummaryIcon from './assets/summary.svg';
+import HighlightList from '../HighlightList';
 
 const navStyle = css`
   position: fixed;
@@ -25,7 +26,7 @@ const backgroundStyle = css`
   right: 0;
   bottom: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(2px);
 `;
 
@@ -39,6 +40,7 @@ const contentWrapperStyle = css`
 
 const contentStyle = css`
   flex: 1;
+  width: 100%;
 `;
 
 const toggleStyle = css`
@@ -51,12 +53,13 @@ const toggleStyle = css`
   border-radius: 50%;
   cursor: pointer;
   text-align: center;
+  border: 2px solid #000;
 
   svg {
     width: 24px;
     height: 24px;
     display: inline-block;
-    fill: #fff;
+    fill: #000;
   }
 `;
 
@@ -87,7 +90,7 @@ export default function PageSummary() {
       <div className={backgroundStyle} />
       <div className={contentWrapperStyle}>
         <div className={contentStyle}>
-
+          <HighlightList highlights={highlights} />
         </div>
         <button className={toggleStyle} onClick={() => setIsOpen(!isOpen)} aria-label="Highlight summary">
           <SummaryIcon />

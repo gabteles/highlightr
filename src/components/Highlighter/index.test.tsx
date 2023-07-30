@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, render, screen } from '@testing-library/react';
+import { act, getByTestId, render, screen } from '@testing-library/react';
 import useSelectedText from '../../hooks/useSelectedText';
 import usePositioner from '../../hooks/usePositioner';
 import useHighlightStore from '../../hooks/useHighlightStore';
@@ -31,13 +31,38 @@ describe('Highlighter', () => {
   it('adds a highlight when the button is clicked', () => {
     const saveHighlight = jest.fn();
 
-    (useSelectedText as jest.Mock).mockReturnValue({ text: 'Some text', range: new Range() });
+    jest.useFakeTimers().setSystemTime(new Date('2023-07-29T00:00:00.000Z'));
     (usePositioner as jest.Mock).mockReturnValue({ x: 100, y: 200 });
     (useHighlightStore as jest.Mock).mockReturnValue({ saveHighlight });
     (usePageMetadata as jest.Mock).mockReturnValue({ canonical: 'https://example.com' });
-    jest.useFakeTimers().setSystemTime(new Date('2023-07-29T00:00:00.000Z'));
+    (useSelectedText as jest.Mock).mockImplementation(() => ({
+      text: 'Some text',
+      range: new Range(),
+      container: screen.queryByTestId('selection-container'),
+      anchorNode: screen.queryByTestId('anchor-node'),
+      anchorOffset: 1,
+      focusNode: screen.queryByTestId('focus-node'),
+      focusOffset: 2,
+    }));
 
-    render(<Highlighter />);
+    const { rerender } = render(
+      <div id="a" data-testid='selection-container'>
+        <span id="b" data-testid='anchor-node'>anchorNode</span>
+        <span id="c" data-testid='focus-node'>focusNode</span>
+      </div>
+    );
+
+    // Simulates the highligher being mounted after the selection has been made
+    rerender(
+      <>
+        <Highlighter />
+        <div id="a" data-testid='selection-container'>
+          <span id="b" data-testid='anchor-node'>anchorNode</span>
+          <span id="c" data-testid='focus-node'>focusNode</span>
+        </div>
+      </>
+    );
+
     act(() => {
       screen.getByLabelText('highlightr').click();
     });
@@ -47,6 +72,11 @@ describe('Highlighter', () => {
       text: 'Some text',
       createdAt: '2023-07-29T00:00:00.000Z',
       url: 'https://example.com',
+      container: '#a',
+      anchorNode: '#b',
+      anchorOffset: 1,
+      focusNode: '#c',
+      focusOffset: 2,
     });
   })
 });
