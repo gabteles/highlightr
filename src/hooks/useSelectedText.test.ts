@@ -15,7 +15,7 @@ describe('useSelectedText', () => {
     });
   });
 
-  it('returns selection data when a `selectionchange` event is fired', async () => {
+  it('returns selection data when a `mouseup` event is fired', async () => {
     const { result } = renderHook(() => useSelectedText());
 
     const range = document.createRange();
@@ -52,7 +52,7 @@ describe('useSelectedText', () => {
     });
 
     act(() => {
-      document.dispatchEvent(new Event('selectionchange'))
+      document.dispatchEvent(new Event('mouseup'))
     });
 
     expect(result.current).toEqual({
@@ -66,7 +66,7 @@ describe('useSelectedText', () => {
     });
   });
 
-  it('returns nothing when a `selectionchange` event is fired but there is no selected text', async () => {
+  it('returns nothing when a `mouseup` event is fired but there is no selected text', async () => {
     const { result } = renderHook(() => useSelectedText());
 
     jest.spyOn(window, 'getSelection').mockReturnValueOnce({
@@ -96,7 +96,7 @@ describe('useSelectedText', () => {
     });
 
     act(() => {
-      document.dispatchEvent(new Event('selectionchange'))
+      document.dispatchEvent(new Event('mouseup'))
     });
 
     expect(result.current).toEqual({

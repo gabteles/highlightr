@@ -49,9 +49,9 @@ export default function useSelectedText(): Return {
       })
     };
 
-    document.addEventListener('selectionchange', listener);
-    return () => document.removeEventListener('selectionchange', listener);
-  }, []);
+    document.addEventListener('mouseup', listener);
+    return () => document.removeEventListener('mouseup', listener);
+  }, [initialValue]);
 
   return value;;
 }
