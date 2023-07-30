@@ -3,6 +3,7 @@ import { act, render, screen } from '@testing-library/react';
 import Sidebar from './index';
 import PageHighlightsContext from '../../context/PageHighlightsContext';
 import { Highlight } from '../../types/Highlight';
+import { SidebarContextProvider } from '../../context/SidebarContext';
 
 describe('Sidebar', () => {
   const baseValue = {
@@ -63,9 +64,11 @@ describe('Sidebar', () => {
     };
 
     render(
-      <PageHighlightsContext.Provider value={{ ...baseValue, highlights: [highlight] }}>
-        <Sidebar />
-      </PageHighlightsContext.Provider>
+      <SidebarContextProvider>
+        <PageHighlightsContext.Provider value={{ ...baseValue, highlights: [highlight] }}>
+          <Sidebar />
+        </PageHighlightsContext.Provider>
+      </SidebarContextProvider>
     );
 
     act(() => {
