@@ -22,10 +22,10 @@ export default class Mux {
     this.port?.postMessage({ type: command, payload });
   }
 
-  subscribe(event: string, payload: unknown, callback: (payload: object) => void): () => void {
+  subscribe<T extends object = object>(event: string, payload: unknown, callback: (payload: T) => void): () => void {
     const subscriptionId = uuidv4();
     this.port?.postMessage({ type: 'subscribe', event, payload, subscriptionId });
-    this.subscriptions.set(subscriptionId, callback);
+    this.subscriptions.set(subscriptionId, callback as (payload: object) => void);
     return () => this.unsubscribe(subscriptionId);
   }
 

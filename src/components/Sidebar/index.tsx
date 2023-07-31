@@ -5,6 +5,7 @@ import SummaryIcon from './assets/summary.svg';
 import HighlightList from '../HighlightList';
 import PageHighlightsContext from '../../context/PageHighlightsContext';
 import SidebarContext from '../../context/SidebarContext';
+import Summary from '../Summary';
 
 const navStyle = css`
   position: fixed;
@@ -40,6 +41,22 @@ const contentWrapperStyle = css`
 const contentStyle = css`
   flex: 1;
   width: 100%;
+`;
+
+const contentInnerStyle = css`
+  padding: 16px;
+  height: 100%;
+`;
+
+const titleStyle = css`
+  font-size: 20px;
+  margin-bottom: 12px;
+  font-weight: bold;
+  color: #000;
+
+  &:not(:first-of-type) {
+    margin-top: 24px;
+  }
 `;
 
 const toggleStyle = css`
@@ -82,7 +99,13 @@ export default function Sidebar() {
       <div className={backgroundStyle} />
       <div className={contentWrapperStyle}>
         <div className={contentStyle}>
-          <HighlightList highlights={highlights} />
+          <div className={contentInnerStyle}>
+            <div className={titleStyle}>Summary</div>
+            <Summary />
+
+            <div className={titleStyle}>Highlights</div>
+            <HighlightList highlights={highlights} />
+          </div>
         </div>
         <button className={toggleStyle} onClick={() => sidebar.toggle()} aria-label="Highlight summary">
           <SummaryIcon />
