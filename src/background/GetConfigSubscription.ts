@@ -1,10 +1,10 @@
 import { IDatabaseChange } from 'dexie-observable/api';
-import HighlightStore from '../data/HighlightStore';
+import IndexedDbStore from '../data/IndexedDbStore';
 import { Config } from '../types/Config';
 
 export default function GetConfigSubscription(_payload: {}, emit: (data: { config: Config }) => void) {
   const emitConfig = async () => {
-    const config = await HighlightStore.config.toArray();
+    const config = await IndexedDbStore.config.toArray();
 
     emit({
       config: {
@@ -21,6 +21,6 @@ export default function GetConfigSubscription(_payload: {}, emit: (data: { confi
   };
 
   emitConfig();
-  HighlightStore.on('changes', listener);
-  return () => HighlightStore.on('changes').unsubscribe(listener);
+  IndexedDbStore.on('changes', listener);
+  return () => IndexedDbStore.on('changes').unsubscribe(listener);
 }

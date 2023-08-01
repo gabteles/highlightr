@@ -1,5 +1,5 @@
 import { IDatabaseChange } from 'dexie-observable/api';
-import HighlightStore from '../data/HighlightStore';
+import IndexedDbStore from '../data/IndexedDbStore';
 import { Highlight } from '../types/Highlight';
 
 export default function PageHighlightsSubscription(
@@ -7,7 +7,7 @@ export default function PageHighlightsSubscription(
   emit: (data: { highlights: Highlight[] }) => void,
 ) {
   const emitHighlightsForPage = async () => {
-    const highlights = await HighlightStore.highlights.where('url').equals(payload.pageUrl).toArray();
+    const highlights = await IndexedDbStore.highlights.where('url').equals(payload.pageUrl).toArray();
     emit({ highlights });
   };
 
@@ -27,6 +27,6 @@ export default function PageHighlightsSubscription(
   };
 
   emitHighlightsForPage();
-  HighlightStore.on('changes', listener);
-  return () => HighlightStore.on('changes').unsubscribe(listener);
+  IndexedDbStore.on('changes', listener);
+  return () => IndexedDbStore.on('changes').unsubscribe(listener);
 }

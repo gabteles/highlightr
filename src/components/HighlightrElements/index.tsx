@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import ConfigContext from '../../context/ConfigContext';
 
 
-export default function HighlightController() {
+export default function HighlightrElements() {
   const config = useContext(ConfigContext);
 
   if (!config.enabled) return null;

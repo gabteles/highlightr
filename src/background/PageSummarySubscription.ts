@@ -1,16 +1,16 @@
 import { IDatabaseChange } from 'dexie-observable/api';
 import { PageSummary } from '../types/PageSummary';
-import HighlightStore from '../data/HighlightStore';
+import IndexedDbStore from '../data/IndexedDbStore';
 import OpenAIAPI from '../data/OpenAIAPI';
 
 export default function PageSummarySubscription(
   payload: { pageUrl: string },
   emit: (data: { summary: PageSummary }) => void,
 ) {
-  const getHighlights = () => HighlightStore.highlights.where('url').equals(payload.pageUrl).toArray();
-  const getSummary = () => HighlightStore.summary.get(payload.pageUrl);
+  const getHighlights = () => IndexedDbStore.highlights.where('url').equals(payload.pageUrl).toArray();
+  const getSummary = () => IndexedDbStore.summary.get(payload.pageUrl);
   const getApiKey = async (): Promise<string | undefined> => {
-    const config = await HighlightStore.config.toArray();
+    const config = await IndexedDbStore.config.toArray();
 
     const valid = config.find((k) => k.name === 'valid')?.value as boolean;
     if (!valid) return undefined;
@@ -38,7 +38,7 @@ export default function PageSummarySubscription(
       };
 
 
-      HighlightStore.summary.put(summary);
+      IndexedDbStore.summary.put(summary);
     }
 
     const highlights = await getHighlights();
@@ -49,7 +49,7 @@ export default function PageSummarySubscription(
 
     if (needsRefresh) {
       summary = { ...summary, loading: true };
-      HighlightStore.summary.put(summary);
+      IndexedDbStore.summary.put(summary);
       emit({ summary });
 
       const [summarizedText, tags] = await OpenAIAPI.summarize(apiKey, highlights.map((h) => h.text));
@@ -63,7 +63,7 @@ export default function PageSummarySubscription(
     }
 
     summary = { ...summary, loading: false };
-    HighlightStore.summary.put(summary);
+    IndexedDbStore.summary.put(summary);
     emit({ summary });
   };
 
@@ -79,6 +79,6 @@ export default function PageSummarySubscription(
   };
 
   emitSummary();
-  HighlightStore.on('changes', listener);
-  return () => HighlightStore.on('changes').unsubscribe(listener);
+  IndexedDbStore.on('changes', listener);
+  return () => IndexedDbStore.on('changes').unsubscribe(listener);
 }

@@ -1,5 +1,5 @@
-import HighlightStore from '../data/HighlightStore';
+import IndexedDbStore from '../data/IndexedDbStore';
 
 export default async function EnableCommand(payload: { enabled: boolean }) {
-  HighlightStore.config.put({ name: 'enabled', value: payload.enabled, updatedAt: Date.now() });
+  IndexedDbStore.config.put({ name: 'enabled', value: payload.enabled, updatedAt: Date.now() });
 }

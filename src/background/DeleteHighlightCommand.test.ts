@@ -1,13 +1,13 @@
-import HighlightStore from '../data/HighlightStore';
+import IndexedDbStore from '../data/IndexedDbStore';
 import DeleteHighlightCommand from './DeleteHighlightCommand';
 
 describe('DeleteHighlightCommand', () => {
   beforeEach(async () => {
-    await HighlightStore.highlights.clear();
+    await IndexedDbStore.highlights.clear();
   });
 
   it('deletes the highligh', async () => {
-    HighlightStore.highlights.add({
+    IndexedDbStore.highlights.add({
       uuid: '1234',
       createdAt: new Date().toISOString(),
       text: 'Foobar',
@@ -18,9 +18,9 @@ describe('DeleteHighlightCommand', () => {
       focusNode: '#focusNode',
       focusOffset: 1,
     });
-    const countBefore = await HighlightStore.highlights.count();
+    const countBefore = await IndexedDbStore.highlights.count();
     DeleteHighlightCommand({ highlightId: '1234' });
-    const countAfter = await HighlightStore.highlights.count();
+    const countAfter = await IndexedDbStore.highlights.count();
     expect(countAfter).toBe(countBefore - 1);
   });
 });

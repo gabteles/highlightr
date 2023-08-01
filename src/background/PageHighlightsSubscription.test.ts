@@ -1,10 +1,10 @@
 import { waitFor } from '@testing-library/react';
-import HighlightStore from '../data/HighlightStore';
+import IndexedDbStore from '../data/IndexedDbStore';
 import PageHighlightsSubscription from './PageHighlightsSubscription';
 
 describe('PageHighlightsSubscription', () => {
   beforeEach(async () => {
-    await HighlightStore.highlights.clear();
+    await IndexedDbStore.highlights.clear();
   });
 
   it('emits the highlights for a page', async () => {
@@ -19,7 +19,7 @@ describe('PageHighlightsSubscription', () => {
       focusNode: '#focusNode',
       focusOffset: 1,
     };
-    await HighlightStore.highlights.add(highlight);
+    await IndexedDbStore.highlights.add(highlight);
 
     const emit = jest.fn();
     PageHighlightsSubscription({ pageUrl: 'http://localhost:3000' }, emit);
@@ -42,7 +42,7 @@ describe('PageHighlightsSubscription', () => {
 
     const emit = jest.fn();
     PageHighlightsSubscription({ pageUrl: 'http://localhost:3000' }, emit);
-    await HighlightStore.highlights.add(highlight);
+    await IndexedDbStore.highlights.add(highlight);
 
     await waitFor(() => expect(emit.mock.calls[0][0]).toEqual({ highlights: [] }));
     await waitFor(() => expect(emit.mock.calls[1][0]).toEqual({ highlights: [highlight] }));
@@ -60,13 +60,13 @@ describe('PageHighlightsSubscription', () => {
       focusNode: '#focusNode',
       focusOffset: 1,
     };
-    await HighlightStore.highlights.add(highlight);
+    await IndexedDbStore.highlights.add(highlight);
 
     const emit = jest.fn();
     PageHighlightsSubscription({ pageUrl: 'http://localhost:3000' }, emit);
     await waitFor(() => expect(emit.mock.calls[1][0]).toEqual({ highlights: [highlight] }));
 
-    await HighlightStore.highlights.update(highlight.uuid, { text: 'Foobaz' });
+    await IndexedDbStore.highlights.update(highlight.uuid, { text: 'Foobaz' });
     await waitFor(() => expect(emit.mock.calls[2][0]).toEqual({ highlights: [{ ...highlight, text: 'Foobaz' }] }));
   });
 
@@ -82,13 +82,13 @@ describe('PageHighlightsSubscription', () => {
       focusNode: '#focusNode',
       focusOffset: 1,
     };
-    await HighlightStore.highlights.add(highlight);
+    await IndexedDbStore.highlights.add(highlight);
 
     const emit = jest.fn();
     PageHighlightsSubscription({ pageUrl: 'http://localhost:3000' }, emit);
     await waitFor(() => expect(emit.mock.calls[1][0]).toEqual({ highlights: [highlight] }));
 
-    await HighlightStore.highlights.delete(highlight.uuid);
+    await IndexedDbStore.highlights.delete(highlight.uuid);
     await waitFor(() => expect(emit.mock.calls[2][0]).toEqual({ highlights: [] }));
   });
 
@@ -115,7 +115,7 @@ describe('PageHighlightsSubscription', () => {
       focusNode: '#focusNode',
       focusOffset: 1,
     };
-    await HighlightStore.highlights.bulkAdd([highlight1, highlight2]);
+    await IndexedDbStore.highlights.bulkAdd([highlight1, highlight2]);
 
     const emit = jest.fn();
     PageHighlightsSubscription({ pageUrl: 'http://localhost:3000' }, emit);

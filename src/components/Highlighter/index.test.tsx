@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, getByTestId, render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import useSelectedText from '../../hooks/useSelectedText';
 import usePositioner from '../../hooks/usePositioner';
 import useHighlightStore from '../../hooks/useHighlightStore';

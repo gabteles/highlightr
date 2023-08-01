@@ -1,13 +1,13 @@
 import { waitFor } from '@testing-library/react';
-import HighlightStore from '../data/HighlightStore';
+import IndexedDbStore from '../data/IndexedDbStore';
 import PageSummarySubscription from './PageSummarySubscription';
 import OpenAIAPI from '../data/OpenAIAPI';
 
 describe('PageSummarySubscription', () => {
   beforeEach(async () => {
-    await HighlightStore.summary.clear();
-    await HighlightStore.highlights.clear();
-    await HighlightStore.config.clear();
+    await IndexedDbStore.summary.clear();
+    await IndexedDbStore.highlights.clear();
+    await IndexedDbStore.config.clear();
     OpenAIAPI.summarize = jest.fn().mockResolvedValue(['Foobar', ['foo', 'bar']]);
   });
 
@@ -20,7 +20,7 @@ describe('PageSummarySubscription', () => {
       loading: false,
     };
 
-    await HighlightStore.summary.add(summary);
+    await IndexedDbStore.summary.add(summary);
 
     const emit = jest.fn();
     PageSummarySubscription({ pageUrl: 'http://localhost:3000' }, emit);
@@ -37,12 +37,12 @@ describe('PageSummarySubscription', () => {
       loading: false,
     };
 
-    await HighlightStore.summary.add(summary);
+    await IndexedDbStore.summary.add(summary);
 
     const emit = jest.fn();
     PageSummarySubscription({ pageUrl: 'http://localhost:3000' }, emit);
 
-    await HighlightStore.highlights.add({
+    await IndexedDbStore.highlights.add({
       uuid: '1234',
       createdAt: new Date().toISOString(),
       text: 'Foobar',
@@ -67,7 +67,7 @@ describe('PageSummarySubscription', () => {
   });
 
   it('will not emit/generate a summary for a page if the api key is invalid', async () => {
-    await HighlightStore.config.bulkAdd([
+    await IndexedDbStore.config.bulkAdd([
       { name: 'valid', value: false, updatedAt: Date.now()},
       { name: 'openai-key', value: '1234', updatedAt: Date.now() },
     ]);
@@ -78,13 +78,13 @@ describe('PageSummarySubscription', () => {
   });
 
   it('saves the summary in a loading state if it does not exist', async () => {
-    await HighlightStore.config.bulkAdd([
+    await IndexedDbStore.config.bulkAdd([
       { name: 'valid', value: true, updatedAt: Date.now() },
       { name: 'openai-key', value: '1234', updatedAt: Date.now() },
     ]);
 
     const emit = jest.fn();
-    const spy = jest.spyOn(HighlightStore.summary, 'put');
+    const spy = jest.spyOn(IndexedDbStore.summary, 'put');
     PageSummarySubscription({ pageUrl: 'http://localhost:3000' }, emit);
 
     await waitFor(() => {
@@ -99,12 +99,12 @@ describe('PageSummarySubscription', () => {
   });
 
   it('generates the summary with openai if it needs updates (highlightIds has changed)', async () => {
-    await HighlightStore.config.bulkAdd([
+    await IndexedDbStore.config.bulkAdd([
       { name: 'valid', value: true, updatedAt: Date.now() },
       { name: 'openai-key', value: '1234', updatedAt: Date.now() },
     ]);
 
-    await HighlightStore.summary.add({
+    await IndexedDbStore.summary.add({
       url: 'http://localhost:3000',
       summary: null,
       tags: [],
@@ -112,7 +112,7 @@ describe('PageSummarySubscription', () => {
       loading: false,
     });
 
-    await HighlightStore.highlights.add({
+    await IndexedDbStore.highlights.add({
       uuid: '1234',
       createdAt: new Date().toISOString(),
       text: 'Foobar',
@@ -141,13 +141,13 @@ describe('PageSummarySubscription', () => {
   });
 
   it('saves and emits the summary without the loading state at the end', async () => {
-    await HighlightStore.config.bulkAdd([
+    await IndexedDbStore.config.bulkAdd([
       { name: 'valid', value: true, updatedAt: Date.now() },
       { name: 'openai-key', value: '1234', updatedAt: Date.now() },
     ]);
 
     const emit = jest.fn();
-    const spy = jest.spyOn(HighlightStore.summary, 'put');
+    const spy = jest.spyOn(IndexedDbStore.summary, 'put');
     PageSummarySubscription({ pageUrl: 'http://localhost:3000' }, emit);
 
     await waitFor(() => {

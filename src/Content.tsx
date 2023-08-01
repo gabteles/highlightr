@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import HighlightController from './components/HighlightController';
+import HighlightrElements from './components/HighlightrElements';
 import { PageHighlightsProvider } from './context/PageHighlightsContext';
 import { SidebarContextProvider } from './context/SidebarContext';
 import { ConfigProvider } from './context/ConfigContext';
@@ -12,7 +12,7 @@ ReactDOM.createRoot(root).render(
     <ConfigProvider>
       <PageHighlightsProvider>
         <SidebarContextProvider>
-          <HighlightController />
+          <HighlightrElements />
         </SidebarContextProvider>
       </PageHighlightsProvider>
     </ConfigProvider>

@@ -1,6 +1,6 @@
-import HighlightStore from '../data/HighlightStore';
+import IndexedDbStore from '../data/IndexedDbStore';
 import { Highlight } from '../types/Highlight';
 
 export default function SaveHighlightCommand(payload: { highlight: Highlight }) {
-  HighlightStore.highlights.add(payload.highlight);
+  IndexedDbStore.highlights.add(payload.highlight);
 }

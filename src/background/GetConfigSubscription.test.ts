@@ -1,14 +1,14 @@
 import { waitFor } from '@testing-library/react';
-import HighlightStore from '../data/HighlightStore';
+import IndexedDbStore from '../data/IndexedDbStore';
 import GetConfigSubscription from './GetConfigSubscription';
 
 describe('GetConfigSubscription', () => {
   beforeEach(async () => {
-    await HighlightStore.config.clear();
+    await IndexedDbStore.config.clear();
   });
 
   it('emits the config not exposing api keys', async () => {
-    await HighlightStore.config.bulkAdd([
+    await IndexedDbStore.config.bulkAdd([
       { name: 'valid', value: true, updatedAt: Date.now() },
       { name: 'openai-key', value: '1234', updatedAt: Date.now() },
       { name: 'enabled', value: true, updatedAt: Date.now() },
@@ -27,16 +27,16 @@ describe('GetConfigSubscription', () => {
 
     await waitFor(() => expect(emit).toHaveBeenCalledWith({ config: { enabled: true, present: false, valid: undefined } }));
 
-    await HighlightStore.config.bulkAdd([
+    await IndexedDbStore.config.bulkAdd([
       { name: 'valid', value: false, updatedAt: Date.now() },
       { name: 'openai-key', value: '1234', updatedAt: Date.now() },
     ]);
     await waitFor(() => expect(emit).toHaveBeenCalledWith({ config: { enabled: true, valid: false, present: true } }));
 
-    await HighlightStore.config.delete('openai-key');
+    await IndexedDbStore.config.delete('openai-key');
     await waitFor(() => expect(emit).toHaveBeenCalledWith({ config: { enabled: true, valid: false, present: false} }));
 
-    await HighlightStore.config.update('valid', { value: true });
+    await IndexedDbStore.config.update('valid', { value: true });
     await waitFor(() => expect(emit).toHaveBeenCalledWith({ config: { enabled: true, valid: true, present: false} }));
   });
 });

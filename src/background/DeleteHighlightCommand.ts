@@ -1,5 +1,5 @@
-import HighlightStore from '../data/HighlightStore';
+import IndexedDbStore from '../data/IndexedDbStore';
 
 export default function DeleteHighlightCommand(payload: { highlightId: string }) {
-  HighlightStore.highlights.delete(payload.highlightId);
+  IndexedDbStore.highlights.delete(payload.highlightId);
 }

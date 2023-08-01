@@ -3,7 +3,7 @@ import 'dexie-observable';
 import { Highlight } from '../types/Highlight';
 import { PageSummary } from '../types/PageSummary';
 
-class HighlightStore extends Dexie {
+class IndexedDbStore extends Dexie {
   public highlights!: Table<Highlight>;
   public config!: Table<{ name: string, value: unknown, updatedAt: number }>;
   public summary!: Table<PageSummary>;
@@ -19,5 +19,5 @@ class HighlightStore extends Dexie {
   }
 }
 
-const instance = new HighlightStore();
+const instance = new IndexedDbStore();
 export default instance;
