@@ -173,7 +173,7 @@ export default function Config({ showEnable, onSetup }: Props) {
     <div className={wrapperStyle}>
       {
         config.loading && (
-          <div className={loaderWrapperStyle}>
+          <div className={loaderWrapperStyle} data-testid="loader">
             <div className={loaderStyle} />
           </div>
         )
@@ -184,7 +184,7 @@ export default function Config({ showEnable, onSetup }: Props) {
           <div className={configWrapperStyle}>
             <strong>Enable Highlightr</strong>
             <div>
-              <label className={switchStyle}>
+              <label className={switchStyle} aria-label="Enable" aria-checked={config.enabled}>
                 <input type="checkbox" checked={config.enabled} onChange={(e) => config.setEnabled(e.target.checked)} />
                 <span></span>
               </label>
@@ -208,10 +208,12 @@ export default function Config({ showEnable, onSetup }: Props) {
             value={openAiKey}
             placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
             onChange={(e) => setOpenAiKey(e.target.value)}
+            data-testid="openai-key-input"
           />
           {
             !showEnable && (
               <button
+                data-testid="submit"
                 className={classNames(buttonStyle, { [errorStyle]: config.present && !config.valid && !config.loading })}
                 onClick={() => config.setOpenAiKey(openAiKey)}
               >
@@ -226,6 +228,7 @@ export default function Config({ showEnable, onSetup }: Props) {
         showEnable && (
           <div className={submitStyle}>
             <button
+              data-testid="submit"
               className={classNames(buttonStyle, { [errorStyle]: config.present && !config.valid && !config.loading })}
               onClick={onSaveConfig}
             >

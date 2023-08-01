@@ -4,7 +4,12 @@ class OpenAIAPI {
   }
 
   summarize(apiKey: string, highlights: string[]): Promise<[string, string[]]> {
-    return Promise.resolve(['Lorem ipsum. This is a fake summary' + Math.random().toString(), ['foo', 'bar']]);
+    console.log('summarizing', highlights)
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([`Lorem ipsum. This is a fake summary ${Math.random()}`, ['foo', 'bar']]);
+      }, 5000);
+    })
   }
 }
 

@@ -19,6 +19,8 @@ export default function PageSummarySubscription(
     return key?.value as string | undefined;
   };
 
+  // TODO: Instead of saving and emitting the summary, we should just save the summary.
+  // The responsibility of emitting the summary should be in the db listener.
   const emitSummary = async () => {
     let summary = await getSummary();
     if (summary) emit({ summary });
@@ -43,9 +45,13 @@ export default function PageSummarySubscription(
     const needsRefresh = (
       (summary.highlightIds.length !== highlights.length) ||
       highlights.some((h) => !summary?.highlightIds?.includes(h.uuid as string))
-    );
+      );
 
     if (needsRefresh) {
+      summary = { ...summary, loading: true };
+      HighlightStore.summary.put(summary);
+      emit({ summary });
+
       const [summarizedText, tags] = await OpenAIAPI.summarize(apiKey, highlights.map((h) => h.text));
       const highlightIds = highlights.map((h) => h.uuid as string);
       summary = {
