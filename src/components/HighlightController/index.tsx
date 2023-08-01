@@ -1,20 +1,20 @@
 import Sidebar from '../Sidebar';
 import Highlighter from '../Highlighter';
 import HighlightMarkers from '../HighlightMarkers';
-import { PageHighlightsProvider } from '../../context/PageHighlightsContext';
-import { SidebarContextProvider } from '../../context/SidebarContext';
-import { ConfigProvider } from '../../context/ConfigContext';
+import { useContext } from 'react';
+import ConfigContext from '../../context/ConfigContext';
+
 
 export default function HighlightController() {
+  const config = useContext(ConfigContext);
+
+  if (!config.enabled) return null;
+
   return (
-    <ConfigProvider>
-      <PageHighlightsProvider>
-        <SidebarContextProvider>
-          <HighlightMarkers />
-          <Highlighter />
-          <Sidebar />
-        </SidebarContextProvider>
-      </PageHighlightsProvider>
-    </ConfigProvider>
+    <>
+      <HighlightMarkers />
+      <Highlighter />
+      <Sidebar />
+    </>
   );
 }

@@ -15,7 +15,7 @@ class OpenAIAPI {
 
   async summarize(apiKey: string, highlights: string[]): Promise<[string, string[]]> {
     const shape = { summary: 'string', hashtags: ['string'] };
-    const prompt = `Generate a summary in one paragraph for the following text. Include 4 hashtags to represent the content. Return the response as a JSON array with the shape of ${JSON.stringify(shape)}.\nText:"""\n${highlights.join('\n')}\n"""`;
+    const prompt = `Generate a summary in up to two paragraphs for the following text. Include up to 5 hashtags to represent the content. Return the response as a JSON array with the shape of ${JSON.stringify(shape)}.\nText:"""\n${highlights.join('\n')}\n"""`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
