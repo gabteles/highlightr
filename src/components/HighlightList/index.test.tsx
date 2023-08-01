@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { Highlight } from '../../types/Highlight';
 import HighlightList from '.';
 import PageHighlightsContext from '../../context/PageHighlightsContext';
+import useHighlightStore from '../../hooks/useHighlightStore';
+jest.mock('../../hooks/useHighlightStore');
 
 describe('HighlightList', () => {
   it('renders each highlight', () => {
@@ -100,5 +102,30 @@ describe('HighlightList', () => {
 
     expect(spy).toHaveBeenCalledWith('[data-highlight-id="1234"]');
     expect(elem.scrollIntoView).toHaveBeenCalled();
+  });
+
+  it('removes the highlight when the remove button is clicked', () => {
+    const highlights: Highlight[] = [
+      {
+        uuid: '1234',
+        createdAt: new Date().toISOString(),
+        text: 'Foobar',
+        url: 'http://localhost:3000',
+        container: '#container',
+        anchorNode: '#anchorNode',
+        anchorOffset: 0,
+        focusNode: '#focusNode',
+        focusOffset: 1,
+      },
+    ];
+
+    const removeHighlight = jest.fn();
+    (useHighlightStore as jest.Mock).mockReturnValue({ removeHighlight });
+
+    render(<HighlightList highlights={highlights} />);
+    const removeButton = screen.getByTestId('remove-highlight-1234');
+    userEvent.click(removeButton);
+
+    expect(removeHighlight).toHaveBeenCalledWith('1234');
   });
 });

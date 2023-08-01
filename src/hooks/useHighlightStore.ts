@@ -4,12 +4,17 @@ import Mux from '../util/communication/Mux';
 
 type Return = {
   saveHighlight: (highlight: Highlight) => void;
+  removeHighlight: (highlightId: string) => void;
   watchHighlights: (pageUrl: string, callback: (highlights: Highlight[]) => void) => () => void;
 }
 
 export class HighlightStoreMux extends Mux {
   saveHighlight(highlight: Highlight) {
     this.command('save-highlight', { highlight });
+  }
+
+  removeHighlight(highlightId: string) {
+    this.command('delete-highlight', { highlightId });
   }
 
   watchHighlights(pageUrl: string, callback: (payload: { highlights: Highlight[] }) => void) {
@@ -23,6 +28,7 @@ export default function useHighlightStore(): Return {
 
   const value: Return = useMemo(() => ({
     saveHighlight: (highlight) => mux.current.saveHighlight(highlight),
+    removeHighlight: (highlightId) => mux.current.removeHighlight(highlightId),
     watchHighlights: (pageUrl, callback) => (
       mux.current.watchHighlights(pageUrl, (payload) => callback(payload.highlights))
     ),

@@ -4,6 +4,7 @@ import Sidebar from './index';
 import PageHighlightsContext from '../../context/PageHighlightsContext';
 import { Highlight } from '../../types/Highlight';
 import { SidebarContextProvider } from '../../context/SidebarContext';
+jest.mock('../../hooks/useHighlightStore');
 
 describe('Sidebar', () => {
   const baseValue = {
