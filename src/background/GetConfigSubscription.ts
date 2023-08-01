@@ -8,6 +8,7 @@ export default function GetConfigSubscription(_payload: {}, emit: (data: { confi
 
     emit({
       config: {
+        enabled: (config.find((c) => c.name === 'enabled')?.value as boolean) ?? true,
         valid: config.find((c) => c.name === 'valid')?.value as boolean,
         present: !!config.find((c) => c.name === 'openai-key')?.value,
       }

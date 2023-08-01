@@ -8,6 +8,7 @@ describe('PageSummarySubscription', () => {
     await HighlightStore.summary.clear();
     await HighlightStore.highlights.clear();
     await HighlightStore.config.clear();
+    OpenAIAPI.summarize = jest.fn().mockResolvedValue(['Foobar', ['foo', 'bar']]);
   });
 
   it('emits the summary for the page when initializing', async () => {
@@ -67,8 +68,8 @@ describe('PageSummarySubscription', () => {
 
   it('will not emit/generate a summary for a page if the api key is invalid', async () => {
     await HighlightStore.config.bulkAdd([
-      { name: 'valid', value: false },
-      { name: 'openai-key', value: '1234' },
+      { name: 'valid', value: false, updatedAt: Date.now()},
+      { name: 'openai-key', value: '1234', updatedAt: Date.now() },
     ]);
 
     const emit = jest.fn();
@@ -78,8 +79,8 @@ describe('PageSummarySubscription', () => {
 
   it('saves the summary in a loading state if it does not exist', async () => {
     await HighlightStore.config.bulkAdd([
-      { name: 'valid', value: true },
-      { name: 'openai-key', value: '1234' },
+      { name: 'valid', value: true, updatedAt: Date.now() },
+      { name: 'openai-key', value: '1234', updatedAt: Date.now() },
     ]);
 
     const emit = jest.fn();
@@ -99,8 +100,8 @@ describe('PageSummarySubscription', () => {
 
   it('generates the summary with openai if it needs updates (highlightIds has changed)', async () => {
     await HighlightStore.config.bulkAdd([
-      { name: 'valid', value: true },
-      { name: 'openai-key', value: '1234' },
+      { name: 'valid', value: true, updatedAt: Date.now() },
+      { name: 'openai-key', value: '1234', updatedAt: Date.now() },
     ]);
 
     await HighlightStore.summary.add({
@@ -123,8 +124,6 @@ describe('PageSummarySubscription', () => {
       focusOffset: 1,
     });
 
-    OpenAIAPI.summarize = jest.fn().mockResolvedValue(['Foobar', ['foo', 'bar']]);
-
     const emit = jest.fn();
     PageSummarySubscription({ pageUrl: 'http://localhost:3000' }, emit);
 
@@ -143,8 +142,8 @@ describe('PageSummarySubscription', () => {
 
   it('saves and emits the summary without the loading state at the end', async () => {
     await HighlightStore.config.bulkAdd([
-      { name: 'valid', value: true },
-      { name: 'openai-key', value: '1234' },
+      { name: 'valid', value: true, updatedAt: Date.now() },
+      { name: 'openai-key', value: '1234', updatedAt: Date.now() },
     ]);
 
     const emit = jest.fn();

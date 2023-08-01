@@ -7,16 +7,20 @@ type Props = {
 
 type ConfigContextType = {
   loading: boolean;
+  enabled: boolean;
   present: boolean;
   valid: boolean;
   setOpenAiKey: (key: string) => void;
+  setEnabled: (enabled: boolean) => void;
 }
 
 const ConfigContext = createContext<ConfigContextType>({
   loading: true,
+  enabled: false,
   present: false,
   valid: false,
   setOpenAiKey: () => {},
+  setEnabled: () => {},
 });
 
 export default ConfigContext;
@@ -26,14 +30,19 @@ export class ConfigStoreMux extends Mux {
     this.command('set-openai-key', { key });
   }
 
-  get(callback: (payload: { config: { present: boolean, valid: boolean } }) => void) {
-    return this.subscribe<{ config: { present: boolean, valid: boolean } }>('get-config', {}, callback);
+  setEnabled(enabled: boolean) {
+    this.command('set-enabled', { enabled });
+  }
+
+  get(callback: (payload: { config: { enabled: boolean, present: boolean, valid: boolean } }) => void) {
+    return this.subscribe<{ config: { enabled: boolean, present: boolean, valid: boolean } }>('get-config', {}, callback);
   }
 }
 
 export function ConfigProvider({ children }: Props) {
   const [loading, setLoading] = useState<boolean>(true);
-  const [config, setConfig] = useState<{ present: boolean, valid: boolean }>({
+  const [config, setConfig] = useState<{ enabled: boolean, present: boolean, valid: boolean }>({
+    enabled: true,
     present: false,
     valid: false,
   });
@@ -53,15 +62,18 @@ export function ConfigProvider({ children }: Props) {
     };
   }, []);
 
-
   const contextValue = useMemo(() => ({
     loading,
+    enabled: config.enabled,
     present: config.present,
     valid: config.valid,
     setOpenAiKey: (key: string) => {
       mux.current.setOpenAiKey(key);
       setLoading(true);
     },
+    setEnabled: (enabled: boolean) => {
+      mux.current.setEnabled(enabled);
+    }
   }), [loading, config]);
 
   return (

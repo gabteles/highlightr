@@ -22,7 +22,7 @@ const listStyle = css`
     padding: 4px;
     font-style: italic;
     border-radius: 4px;
-    border-left: 6px solid #99cc33;
+    border-left: 6px solid #000;
     margin-bottom: 8px;
     cursor: pointer;
   }

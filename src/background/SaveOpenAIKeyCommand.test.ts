@@ -14,8 +14,8 @@ describe('SaveOpenAIKeyCommand', () => {
 
     const config = await HighlightStore.config.toArray();
     expect(config).toEqual([
-      { name: 'openai-key', value: '1234' },
-      { name: 'valid', value: true },
+      { name: 'openai-key', value: '1234', updatedAt: expect.any(Number) },
+      { name: 'valid', value: true, updatedAt: expect.any(Number) },
     ]);
   });
 });
