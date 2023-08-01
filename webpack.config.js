@@ -4,7 +4,7 @@ const CopyPlugin = require("copy-webpack-plugin")
 
 module.exports = {
   entry: {
-    index: "./src/index.tsx",
+    popup: "./src/Popup.tsx",
     content: "./src/Content.tsx",
     background: "./src/Background.ts"
   },
@@ -33,7 +33,7 @@ module.exports = {
         { from: "manifest.json", to: "../manifest.json" },
       ],
     }),
-    ...getHtmlPlugins(["index"]),
+    ...getHtmlPlugins(["popup"]),
   ],
   resolve: {
     extensions: [".tsx", ".ts", ".js"],

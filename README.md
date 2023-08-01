@@ -1,46 +1,73 @@
-# Getting Started with Create React App
+# Highlightr
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## 1. Pre-requisites
+Grant you have the following tools installed before starting
+- [Git](https://git-scm.com/downloads)
+- [Node 16](https://nodejs.org/en/)
+- [Yarn](https://yarnpkg.com/)
+- Chromium-based browser (Chrome/Brave/Arc/Edge/...)
 
-In the project directory, you can run:
+## 2. Getting started
 
-### `yarn start`
+1. Install the project dependencies by running `yarn` in the root folder.
+2. Run the first build with `yarn build`
+3. Open your browser and navigate to chrome://extensions/
+4. Be sure has the "Developer mode" on
+5. Click "Load unpacked" and select the "dist" folder in this repository.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Everytime you build this extension, even with automatic building (`yarn start`), you need to refresh the extension.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 3. Available commands
 
-### `yarn test`
+- `yarn start`: Watches for file changes in the src directory and automatically rebuild the project into the dist folder.
+- `yarn test`:  Runs the tests for this project. You may want to add the `-w` flag keep it watching for changes.
+- `yarn build`: The same as `start` but without watching. Useful for CI builds.
+- `yarn clean`: Cleans the dist folder. Useful if you had some kind of build problem.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 4. Structure
 
-### `yarn build`
+This project has three main pieces:
+- `Popup`: The litte popup that opens when the user clicks in the extension's icon.
+- `Background`: A service worker that performs background operations and communicates with the storage.
+- `Content`: The content scripts. This gets injected into every page and controls the highlighter, the markers, and the sidebar.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 4.1. Popup
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Popup's only function is to show the enable/disable button and get the user's OpenAI api key. It has a very simple component to do this.
+The only particularity to keep in mind is that it is treated as the smallest possible window, so it needs to be wrapped in a container setting its size to be predictable.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+See [Popup.tsx](./src/Popup.tsx)
 
-### `yarn eject`
+### 4.2. Background
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Background is designed to provide data and long-running tasks capabilities to the extension. Because of this, the entrypoint ([Background.ts](./src/Background.ts)) is all about communication.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+It uses a Mux/Demux ([ref](https://en.wikipedia.org/wiki/Multiplexer)) strategy to listen to commands and emit updates to subscriptions. Check [Mux.ts](./src/util/communication/Mux.ts) and [Demux.ts](./src/util/communication/Demux.ts) for more information. They are abstractions above the [native Chrome APIs](developer.chrome.com/docs/extensions/reference/runtime/) to estabilish communication between content scripts and service workers.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+All the commands it can respond to and the subscriptions available are defined under [src/background](./src/background/) and suffixed with `-Command` or `-Subscription`, and exposed by [Background.ts](./src/Background.ts).
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+The second responsibility of this architecture piece is to manage data. This is done by setting up an [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) using [Dexie.js](https://dexie.org/) as an abstraction to be easier to manipulate and watch for changes.
 
-## Learn More
+The option to use it was made considering that the native alternative ([chrome.storage](https://developer.chrome.com/docs/extensions/reference/storage/)) would imply in a lot of effort to manage.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 4.3. Content Scripts
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Here lies the most complex piece of the structure. This is composed by three other main pieces:
+
+### 4.3.1. [Highlighter](./src/components/Highlighter/)
+This component is resposible to detect when the user selects a piece of text in the page, show the option to highlight it, and persist the selection to the database along with metadata necessary to recreate it with the markers.
+
+### 4.3.2. [Highlight Markers](./src/components/HighlightMarkers/)
+This component reads from the database the highlights made on the current page and recreate them with proper styling (the classic yellow background with red text).
+
+This is a very critical component because it hurts the premise of React and directly modifies the DOM. The reason is that the pieces it needs to modify aren't controlled by React.
+
+It is also very sensitive to DOM changes. If the CSS selector to a given highlight changes, it won't be able to reproduce the highlight.
+
+### 4.3.3. [Sidebar](./src/components/Sidebar/)
+The sidebar is where the magic happens. It appears whenever a page has one or more highlights. It shows the list and allows the user to remove them if necessary.
+
+If the user hasn't configured an [OpenAI](https://openai.com/) key, it asks for it. If the user did configure one, it summarizes and shows the text along with a few hashtags.

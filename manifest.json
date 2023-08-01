@@ -4,7 +4,7 @@
   "name": "Highlightr",
   "description": "Highlight and summarize text on the web",
   "action": {
-    "default_popup": "js/index.html",
+    "default_popup": "js/popup.html",
     "default_title": "Highlightr"
   },
   "content_scripts": [

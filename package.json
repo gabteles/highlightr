@@ -6,7 +6,6 @@
     "build": "webpack --config webpack.config.js",
     "start": "webpack -w --config webpack.config.js",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "clean": "rm -rf dist"
   },
   "dependencies": {

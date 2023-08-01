@@ -26,5 +26,5 @@
   "exclude": [
     "src/**/*.test.{tsx,ts}"
   ],
-  "types": ["chrome"]
+  "types": ["chrome", "react-scripts"]
 }
