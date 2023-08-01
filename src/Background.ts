@@ -7,10 +7,6 @@ import GetConfigSubscription from './background/GetConfigSubscription';
 import PageSummarySubscription from './background/PageSummarySubscription';
 import EnableCommand from './background/EnableCommand';
 
-// Temporary
-import HighlightStore from './data/HighlightStore';
-HighlightStore.highlights.clear();
-
 const commPort = new Demux({
   commands: {
     'save-highlight': SaveHighlightCommand,
