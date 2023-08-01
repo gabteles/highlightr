@@ -3,10 +3,10 @@ import SaveHighlightCommand from './background/SaveHighlightCommand';
 import PageHighlightsSubscription from './background/PageHighlightsSubscription';
 import SaveOpenAIKeyCommand from './background/SaveOpenAIKeyCommand';
 import GetConfigSubscription from './background/GetConfigSubscription';
+import PageSummarySubscription from './background/PageSummarySubscription';
 
 // Temporary
 import HighlightStore from './data/HighlightStore';
-import PageSummarySubscription from './background/PageSummarySubscription';
 HighlightStore.highlights.clear();
 
 const commPort = new Demux({

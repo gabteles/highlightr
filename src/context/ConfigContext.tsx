@@ -21,15 +21,13 @@ const ConfigContext = createContext<ConfigContextType>({
 
 export default ConfigContext;
 
-class ConfigStoreMux extends Mux {
+export class ConfigStoreMux extends Mux {
   setOpenAiKey(key: string) {
     this.command('set-openai-key', { key });
   }
 
   get(callback: (payload: { config: { present: boolean, valid: boolean } }) => void) {
-    return this.subscribe('get-config', {}, (payload) => {
-      callback(payload as { config: { present: boolean, valid: boolean } });
-    });
+    return this.subscribe<{ config: { present: boolean, valid: boolean } }>('get-config', {}, callback);
   }
 }
 

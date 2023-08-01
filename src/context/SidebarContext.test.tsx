@@ -4,10 +4,10 @@ import SidebarContext, { SidebarContextProvider } from './SidebarContext';
 jest.mock('../hooks/useHighlightStore');
 
 describe('SidebarContext', () => {
-  it('provides is closed at first', () => {
-    let result: any;
+  const getContext = () => {
+    let result: { current: any } = { current: undefined };
     const TestElem = () => {
-      result = useContext(SidebarContext);
+      result.current = useContext(SidebarContext);
       return <></>
     };
 
@@ -17,60 +17,33 @@ describe('SidebarContext', () => {
       </SidebarContextProvider>
     )
 
-    expect(result.isOpen).toEqual(false);
+    return result;
+  }
+
+  it('provides is closed at first', () => {
+    const result = getContext();
+    expect(result.current.isOpen).toEqual(false);
   });
 
   it('opens the sidebar', () => {
-    let result: any;
-    const TestElem = () => {
-      result = useContext(SidebarContext);
-      return <></>
-    };
-
-    render(
-      <SidebarContextProvider>
-        <TestElem />
-      </SidebarContextProvider>
-    )
-
-    act(() => { result.open(); });
-    expect(result.isOpen).toEqual(true);
+    const result = getContext();
+    act(() => { result.current.open(); });
+    expect(result.current.isOpen).toEqual(true);
   });
 
   it('closes the sidebar', () => {
-    let result: any;
-    const TestElem = () => {
-      result = useContext(SidebarContext);
-      return <></>
-    };
-
-    render(
-      <SidebarContextProvider>
-        <TestElem />
-      </SidebarContextProvider>
-    )
-
-    act(() => { result.close(); });
-    expect(result.isOpen).toEqual(false);
+    const result = getContext();
+    act(() => { result.current.close(); });
+    expect(result.current.isOpen).toEqual(false);
   });
 
   it('toggles the sidebar', () => {
-    let result: any;
-    const TestElem = () => {
-      result = useContext(SidebarContext);
-      return <></>
-    };
+    const result = getContext();
 
-    render(
-      <SidebarContextProvider>
-        <TestElem />
-      </SidebarContextProvider>
-    )
+    act(() => { result.current.toggle(); });
+    expect(result.current.isOpen).toEqual(true);
 
-    act(() => { result.toggle(); });
-    expect(result.isOpen).toEqual(true);
-
-    act(() => { result.toggle(); });
-    expect(result.isOpen).toEqual(false);
+    act(() => { result.current.toggle(); });
+    expect(result.current.isOpen).toEqual(false);
   });
 });

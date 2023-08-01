@@ -7,15 +7,13 @@ type Return = {
   watchHighlights: (pageUrl: string, callback: (highlights: Highlight[]) => void) => () => void;
 }
 
-class HighlightStoreMux extends Mux {
+export class HighlightStoreMux extends Mux {
   saveHighlight(highlight: Highlight) {
     this.command('save-highlight', { highlight });
   }
 
   watchHighlights(pageUrl: string, callback: (payload: { highlights: Highlight[] }) => void) {
-    return this.subscribe('page-highlights', { pageUrl }, (payload) => {
-      callback(payload as { highlights: Highlight[] });
-    });
+    return this.subscribe<{ highlights: Highlight[] }>('page-highlights', { pageUrl }, callback);
   }
 }
 

@@ -7,7 +7,7 @@ type Props = {
   fetch: boolean;
 };
 
-class SummaryMux extends Mux {
+export class SummaryMux extends Mux {
   watchPageSummary(pageUrl: string, callback: (payload: PageSummary) => void) {
     return this.subscribe<{ summary: PageSummary }>('page-summary', { pageUrl }, (payload) => {
       callback(payload.summary);

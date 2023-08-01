@@ -29,6 +29,7 @@ export function PageHighlightsProvider({ children }: Props) {
   const [emphasis, setEmphasis] = useState<string[]>([]);
   const [highlights, setHighlights] = useState<Highlight[]>([]);
 
+  // TODO: Instead of using effect, pass the pageMetadata.canonical to the store
   useEffect(() => {
     if (!pageMetadata.canonical) return;
     return store.watchHighlights(pageMetadata.canonical, setHighlights);
