@@ -41,6 +41,8 @@ export default function Highlighter() {
   const onHighlight = () => {
     if (!selection?.text) return;
 
+    window.getSelection()?.removeAllRanges();
+
     store.saveHighlight({
       uuid: uuidv4(),
       text: selection.text,
