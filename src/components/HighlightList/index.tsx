@@ -24,12 +24,14 @@ const itemStyle = css`
   cursor: pointer;
   font-size: 14px;
   color: #000;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
 `;
 
 const itemInnerStyle = css`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
 
   span {

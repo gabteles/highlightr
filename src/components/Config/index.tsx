@@ -206,7 +206,7 @@ export default function Config({ showEnable, onSetup }: Props) {
             type="password"
             className={classNames(inputStyle, { [groupStyle]: !showEnable, [errorStyle]: config.present && !config.valid && !config.loading })}
             value={openAiKey}
-            placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+            placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
             onChange={(e) => setOpenAiKey(e.target.value)}
             data-testid="openai-key-input"
           />
